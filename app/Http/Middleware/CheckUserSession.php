@@ -24,6 +24,9 @@ class CheckUserSession
 					route('noLoginProduct'),
 				])
 				|| $request->is(route('showProductTypeFile', '*'))
+				|| $request->is('payme/callback')
+				|| $request->is('payme/status/*')
+				|| str_contains($request->url(), 'payme')
 			) {
 				return $response;
 			}

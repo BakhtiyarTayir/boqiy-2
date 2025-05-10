@@ -50,8 +50,12 @@ class PaymeController extends Controller
      */
     public function callback(Request $request)
     {
-        // Log the incoming request
-        Log::info('Payme callback received', $request->all());
+        // Log the incoming request with headers
+        Log::info('Payme callback received', [
+            'data' => $request->all(),
+            'headers' => $request->header(),
+            'test_mode' => $this->test_mode
+        ]);
         
         // Get the request data
         $data = $request->json()->all();
@@ -63,8 +67,16 @@ class PaymeController extends Controller
         
         // Authenticate the request
         $auth = $request->header('Authorization');
-        if (!$auth || !$this->checkAuth($auth)) {
-            return $this->errorResponse(-32504, 'Authorization failed');
+        if (!$auth) {
+            Log::error('Authorization header missing in Payme callback');
+            return $this->errorResponse(-32504, 'Authorization header missing');
+        }
+        
+        // Check authentication
+        $authResult = $this->checkAuth($auth);
+        if (!$authResult['success']) {
+            Log::error('Authorization failed', $authResult);
+            return $this->errorResponse(-32504, 'Authorization failed: ' . $authResult['reason']);
         }
         
         // Handle different methods
@@ -634,7 +646,7 @@ class PaymeController extends Controller
      * Check authorization header
      * 
      * @param string $auth
-     * @return bool
+     * @return array
      */
     protected function checkAuth($auth)
     {
@@ -643,23 +655,52 @@ class PaymeController extends Controller
             $credentials = base64_decode($matches[1]);
             list($login, $password) = explode(':', $credentials, 2);
             
-            // Логируем попытку авторизации для отладки
+            // Логируем попытку авторизации для отладки (без конфиденциальных данных)
             \Log::info('Payme auth attempt', [
                 'received_login' => $login,
                 'expected_merchant_id' => $this->merchant_id,
                 'test_mode' => $this->test_mode
             ]);
             
-            // В Payme различные версии API могут использовать разные логины:
-            // 1. Merchant ID (для очень старых интеграций)
-            // 2. 'Payme' (для некоторых версий API)
-            // 3. 'Paycom' (для новой версии API)
-            
-            $validLogins = [$this->merchant_id, 'Payme', 'Paycom'];
-            return in_array($login, $validLogins) && $password === $this->secret_key;
+            // В зависимости от режима работы (тестовый или боевой) Payme использует разные форматы
+            if ($this->test_mode == 1) {
+                // Для тестового режима
+                $validLogins = [$this->merchant_id, 'Payme', 'Paycom'];
+                $isValid = in_array($login, $validLogins) && $password === $this->secret_key;
+                
+                if (!$isValid) {
+                    return [
+                        'success' => false,
+                        'reason' => 'Invalid credentials for test mode'
+                    ];
+                }
+                
+                return ['success' => true];
+            } else {
+                // Для боевого режима - строгая проверка
+                $isValid = ($login === $this->merchant_id && $password === $this->secret_key);
+                
+                if (!$isValid) {
+                    // Проверим альтернативные логины, используемые в Payme API v2
+                    $alternativeLogins = ['Paycom'];
+                    $isValid = in_array($login, $alternativeLogins) && $password === $this->secret_key;
+                    
+                    if (!$isValid) {
+                        return [
+                            'success' => false,
+                            'reason' => 'Invalid credentials for production mode'
+                        ];
+                    }
+                }
+                
+                return ['success' => true];
+            }
         }
         
-        return false;
+        return [
+            'success' => false,
+            'reason' => 'Invalid Authorization header format'
+        ];
     }
     
     /**

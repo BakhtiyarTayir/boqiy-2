@@ -51,14 +51,30 @@ class Payme extends Model
         // Get merchant ID and key based on mode
         $merchant_id = $payment_gateway->test_mode == 1 ? $keys['merchant_id'] : $keys['merchant_id_live'];
         
-        // Generate unique order ID
-        $order_id = 'LIKE_' . uniqid() . '_' . time();
+        // Логируем для отладки
+        Log::info('Payme payment creation', [
+            'test_mode' => $payment_gateway->test_mode,
+            'merchant_id' => $merchant_id
+        ]);
+        
+        // Generate unique order ID (добавлено больше энтропии)
+        $order_id = 'LIKE_' . Auth::id() . '_' . uniqid() . '_' . time();
         
         // Calculate amount in tiyins (100 tiyins = 1 UZS)
-        $amount = $payment_details['payable_amount'] * 100;
+        $amount = intval($payment_details['payable_amount'] * 100);
         
         // Get URLs from configuration
-        $checkout_url = $keys['checkout_url'];
+        // Используем правильный URL в зависимости от режима
+        $checkout_url = $payment_gateway->test_mode == 1 
+            ? (isset($keys['checkout_url']) ? $keys['checkout_url'] : 'https://test.paycom.uz')
+            : (isset($keys['checkout_url_live']) ? $keys['checkout_url_live'] : 'https://checkout.paycom.uz');
+        
+        // Добавляем проверку, что URL корректный
+        if (!filter_var($checkout_url, FILTER_VALIDATE_URL)) {
+            $checkout_url = $payment_gateway->test_mode == 1 
+                ? 'https://test.paycom.uz'
+                : 'https://checkout.paycom.uz';
+        }
         
         // Get current user ID
         $user_id = Auth::id();
@@ -95,6 +111,12 @@ class Payme extends Model
             'cr' => 'UZS',
             'd' => isset($payment_details['description']) ? $payment_details['description'] : 'Like balance top-up'
         ];
+        
+        // Логируем параметры для отладки
+        Log::info('Payme checkout parameters', [
+            'params' => $params,
+            'checkout_url' => $checkout_url
+        ]);
         
         // Build checkout URL
         $checkout_url = rtrim($checkout_url, '/') . '/?' . http_build_query($params);

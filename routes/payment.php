@@ -4,8 +4,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymeController;
 use Illuminate\Support\Facades\Route;
 
-// Прямые маршруты для Payme с уникальными именами
-Route::post('/payme/callback', [PaymeController::class, 'callback'])->name('payme.callback.handler');
+// Payme routes with proper middleware exclusion
+Route::post('/payme/callback', [PaymeController::class, 'callback'])->name('payme.callback.handler')->withoutMiddleware(\App\Http\Middleware\CheckUserSession::class);
 Route::get('/payme/status/{order_id?}', [PaymeController::class, 'status'])->name('payme.status.handler');
 
 // Новый маршрут для обработки платежей через форму
@@ -29,10 +29,4 @@ Route::controller(PaymentController::class)->group(function () {
 
     //Paystack Pay 
     Route::post('paystack/payment/{identifier}', 'payment_success')->name('make.payment');
-});
-
-// Payme routes
-Route::controller(PaymeController::class)->group(function () {
-    Route::post('payme/callback', 'callback')->name('payme.callback');
-    Route::get('payme/status/{order_id?}', 'status')->name('payme.status');
 });
