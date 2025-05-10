@@ -1,0 +1,10 @@
+.logo-branding  .navbar-brand.mt-2 {
+    overflow: hidden;
+    display: block;
+    height: 41px;
+    margin: 0!important;
+}
+
+.custom-toast {
+    background-color: #6740f5 !important;
+}

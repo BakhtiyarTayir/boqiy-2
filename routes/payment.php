@@ -1,0 +1,38 @@
+<?php
+
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymeController;
+use Illuminate\Support\Facades\Route;
+
+// Прямые маршруты для Payme с уникальными именами
+Route::post('/payme/callback', [PaymeController::class, 'callback'])->name('payme.callback.handler');
+Route::get('/payme/status/{order_id?}', [PaymeController::class, 'status'])->name('payme.status.handler');
+
+// Новый маршрут для обработки платежей через форму
+Route::get('/like-balance/status', [PaymeController::class, 'status'])->name('like.balance.status');
+
+// Настраиваем маршрут для топап-статса (который используется в POST-форме)
+Route::get('/like-balance/topup-status/{orderId?}', [PaymeController::class, 'status'])->name('like_balance.topup_status');
+
+Route::controller(PaymentController::class)->group(function () {
+    Route::get('payment', 'index')->name('payment');
+    Route::get('payment/show_payment_gateway_by_ajax/{identifier}', 'show_payment_gateway_by_ajax')->name('payment.show_payment_gateway_by_ajax');
+    Route::get('payment/success/{identifier}', 'payment_success')->name('payment.success');
+    Route::get('payment/create/{identifier}', 'payment_create')->name('payment.create');
+
+    // razor pay
+    Route::post('payment/{identifier}/order', 'payment_razorpay')->name('razorpay.order');
+
+    // paytm pay
+    Route::post('payment/make/order/{identifier}', 'payment_paytm')->name('make.order');
+    Route::get('payment/make/{identifier}/status', 'paytm_paymentCallback')->name('payment.status');
+
+    //Paystack Pay 
+    Route::post('paystack/payment/{identifier}', 'payment_success')->name('make.payment');
+});
+
+// Payme routes
+Route::controller(PaymeController::class)->group(function () {
+    Route::post('payme/callback', 'callback')->name('payme.callback');
+    Route::get('payme/status/{order_id?}', 'status')->name('payme.status');
+});

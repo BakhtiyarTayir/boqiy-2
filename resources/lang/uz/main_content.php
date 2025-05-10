@@ -1,0 +1,35 @@
+<?php
+
+return [
+    // Create post phrases
+    'What did you learn today ____' => 'Bugun nimalarni o\'rgandingiz ____',
+    'photo' => 'rasm',
+    'Search' => 'Izlash',
+    'Good Morning' => 'Xayrli tong',
+    'Good Afternoon' => 'Xayrli kun',
+    'Good Evening' => 'Xayrli tun',
+    'Sponsored' => 'Sponsor',
+    'Hi' => 'Salom',
+    'Active users' => 'Online foydalanuvchilar',
+    'New users' => 'Yangi foydalanuvchilar',
+    'New posts' => 'Yangi postlar',
+    'New comments' => 'Yangi izohlar',
+    'New likes' => 'Yangi like',
+    'New followers' => 'Yangi obunachilar',
+    'Add to your post' => 'Yangi post qo\'shish',
+    'Add to your story' => 'Yangi story qo\'shish',
+    'Add to your comment' => 'Yangi izoh qo\'shish',
+    'Add to your message' => 'Yangi xabarlar qo\'shish',
+    'Add to your profile' => 'Yangi profil qo\'shish',
+    'Add to your group' => 'Yangi guruh qo\'shish',
+    'Publish Now' => 'Hozir chop etish',
+    'Create Post' => 'Post yaratish',
+    'Save Post' => 'Post saqlash',
+    'My Profile' => 'Mening profilim',
+    'Go to admin panel' => 'Admin panelga o\'tish',
+    'Change Password' => 'Parolni o\'zgartirish',
+    'Log Out' => 'Chiqish',
+    // Comments
+    'Write Comments' => 'Izoh yozing',
+    'View more' => 'Ko\'proq ko\'rish',
+]; 

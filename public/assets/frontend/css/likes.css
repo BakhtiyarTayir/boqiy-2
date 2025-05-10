@@ -1,0 +1,192 @@
+.single-entry .entry-inner {
+    position: relative;
+}
+
+/* Стили для кнопки подарка */
+.gift-button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gift-button:hover {
+    transform: scale(1.1);
+}
+
+/* Стили для панели лайков */
+.likes-panel {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 15px;
+}
+
+.likes-panel-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.likes-panel-header h5 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.likes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.like-item {
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.like-item:hover {
+    transform: scale(1.1);
+}
+
+.like-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.like-item .like-price {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Стили для анимации лайка */
+.like-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.like-animation img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    animation: float-up 2s ease-in-out;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+}
+
+/* Permanent animation that doesn't disappear */
+.permanent-like-animation {
+    position: absolute;
+    bottom: 84px;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.permanent-like-animation img {
+    display: block;
+    max-width: 100%;
+    height: 200px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+    animation: pulse 2s infinite ease-in-out;
+    margin: 0 auto;
+}
+
+/* Make sure videos in posts can be interacted with */
+.post video, .post-item video, .post-content video {
+    position: relative;
+    z-index: 10;
+}
+
+/* Make sure the play button is visible and clickable */
+.plyr__control--overlaid {
+    z-index: 1001 !important;
+}
+
+@keyframes float-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(0) scale(1.2);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(-50px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.8);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* Make sure posts have proper positioning for animations */
+.post, .post-item, .post-content, .single-item-countable {
+    position: relative !important;
+}
+
+/* Make sure the animation container is properly positioned */
+body .like-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+}
+
+/* Reset for properly positioned containers */
+.post .like-animation, 
+.post-item .like-animation, 
+.post-content .like-animation, 
+.single-item-countable .like-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: none;
+    max-width: none;
+    max-height: none;
+} 
