@@ -308,7 +308,7 @@ Route::controller(LikeBalanceController::class)->middleware('auth', 'user', 'ver
     Route::get('/like-balance', 'index')->name('like_balance.index');
     Route::get('/like-balance/topup', 'topup')->name('like_balance.topup');
     Route::post('/like-balance/process-topup', 'processTopup')->name('like_balance.process_topup');
-    Route::get('/like-balance/status/{orderId?}', 'showTopupStatus')->name('like_balance.topup_status');
+    Route::get('/like-balance/status/{orderId?}', 'processTopup')->name('like_balance.topup_status');
     Route::get('/like-balance/payme', 'payme')->name('like_balance.payme');
     Route::get('/like-balance/transactions', 'transactions')->name('like_balance.transactions');
     Route::post('/check-like-balance', 'checkBalance')->name('like_balance.check');
