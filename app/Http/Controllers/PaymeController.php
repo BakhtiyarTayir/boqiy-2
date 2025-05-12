@@ -820,11 +820,13 @@ class PaymeController extends Controller
             }
         }
         
-        // Логируем запрос для отладки
-        \Log::info('Payme status check request', [
+        // Логируем запрос для отладки с полной информацией
+        \Log::info('Payme status callback received', [
             'order_id' => $order_id,
             'all_params' => request()->all(),
-            'url' => request()->fullUrl()
+            'headers' => request()->header(),
+            'url' => request()->fullUrl(),
+            'referer' => request()->header('referer')
         ]);
         
         // Если заказ все еще не определен, перенаправляем на страницу пополнения
@@ -833,38 +835,101 @@ class PaymeController extends Controller
                 ->with('error', 'Order ID not provided. Please try again.');
         }
         
-        // Ищем заказ в таблице orders
-        $order = \App\Models\Order::where('order_id', $order_id)->first();
+        // Проверяем наличие специального параметра success или cancel от Payme
+        $is_payment_cancelled = request()->has('cancel') || request()->query('cancel') == '1';
+        $is_payme_return = !$is_payment_cancelled && (request()->has('success') || request()->query('success') == '1' || request('is_payme_return'));
         
-        if (!$order) {
-            // Заказ не найден, проверяем в других таблицах
-            $transaction = DB::table('payme_transactions')
-                ->where('transaction_id', $order_id)
-                ->first();
+        \Log::info('Payme return flags', [
+            'is_payme_return' => $is_payme_return,
+            'is_payment_cancelled' => $is_payment_cancelled,
+            'has_success' => request()->has('success'),
+            'success_value' => request()->query('success')
+        ]);
+        
+        // Если пользователь отменил платеж - это приоритетное действие
+        if ($is_payment_cancelled) {
+            // Обновляем статус заказа, если он существует
+            if ($order_id) {
+                $order = $this->findOrder($order_id);
+                if ($order && $order->status == 'pending') {
+                    $order->updateStatus('cancelled', null);
+                }
                 
-            if (!$transaction) {
-                // Проверяем в старой таблице transactions
+                // Также проверяем транзакцию
                 $transaction = DB::table('transactions')
                     ->where('order_id', $order_id)
                     ->first();
-                    
-                if (!$transaction) {
-                    return redirect()->route('like_balance.topup')
-                        ->with('error', 'Transaction not found. Please try again or contact support.');
+                
+                if ($transaction && $transaction->status == 'pending') {
+                    DB::table('transactions')
+                        ->where('id', $transaction->id)
+                        ->update([
+                            'status' => 'cancelled',
+                            'updated_at' => now()
+                        ]);
                 }
             }
             
-            // Если нашли транзакцию, проверяем статус
-            if ($transaction->state == 2 || $transaction->status == 'completed') {
+            // Всегда отправляем на страницу пополнения с сообщением об отмене
+            return redirect()->route('like_balance.topup')
+                ->with('error', 'Your payment was cancelled. Please try again if you want to top up your balance.');
+        }
+        
+        // Ищем заказ в таблице orders
+        $order = \App\Models\Order::where('order_id', $order_id)->first();
+        
+        // Проверяем также в таблице транзакций
+        $transaction = null;
+        if (!$order) {
+            // Заказ не найден, проверяем в транзакциях
+            $transaction = DB::table('transactions')
+                ->where('order_id', $order_id)
+                ->first();
+                
+            // Если не нашли в таблице transactions, проверяем в payme_transactions
+            if (!$transaction) {
+                $transaction = DB::table('payme_transactions')
+                    ->where('transaction_id', $order_id)
+                    ->first();
+            }
+            
+            // Если нигде не нашли, а маркер успешного возврата есть
+            if (!$transaction && $is_payme_return) {
+                // Проверим сессию с возвратным URL
+                $return_url = session('payme_return_url');
+                if ($return_url) {
+                    \Log::info('Using saved return URL from session', ['url' => $return_url]);
+                    // Платеж скорее всего обрабатывается, перенаправляем на обработку
+                    return redirect()->route('like_balance.topup')
+                        ->with('info', 'Your payment is being processed. Please wait a moment.');
+                }
+                
+                // Если и сессия пуста, предполагаем проблему
+                return redirect()->route('like_balance.topup')
+                    ->with('error', 'We could not verify your payment. Please contact support if your balance is not updated shortly.');
+            }
+            
+            // Если транзакцию так и не нашли
+            if (!$transaction) {
+                return redirect()->route('like_balance.topup')
+                    ->with('error', 'Transaction not found. Please try again or contact support.');
+            }
+            
+            // Если нашли транзакцию, проверяем её статус
+            if ($transaction && (
+                (isset($transaction->state) && $transaction->state == 2) || 
+                (isset($transaction->status) && $transaction->status == 'completed')
+            )) {
                 return redirect()->route('like_balance.index')
                     ->with('success', 'Your balance has been topped up successfully!');
             }
             
+            // В других случаях, если заказ в обработке
             return redirect()->route('like_balance.topup')
                 ->with('info', 'Your payment is being processed. Please wait or try again later.');
         }
         
-        // Проверяем статус заказа
+        // Если заказ найден - проверяем его статус
         if ($order->status == 'completed') {
             return redirect()->route('like_balance.index')
                 ->with('success', 'Your balance has been topped up successfully!');
@@ -872,7 +937,7 @@ class PaymeController extends Controller
             return redirect()->route('like_balance.topup')
                 ->with('error', 'Your payment was cancelled. Please try again.');
         } else {
-            // Для статусов pending и processing
+            // Для статусов pending и processing - сообщаем о том, что заказ в обработке
             return redirect()->route('like_balance.topup')
                 ->with('info', 'Your payment is being processed. Please wait or try again later.');
         }

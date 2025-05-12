@@ -40,6 +40,16 @@
             <input type="hidden" name="description" value="{{ $formData['description'] }}"/>
         @endif
 
+        {{-- URL для отмены платежа --}}
+        @if(isset($formData['cancel_url']))
+            <input type="hidden" name="cancel_url" value="{{ $formData['cancel_url'] }}"/>
+        @endif
+
+        {{-- URL для отмены платежа по документации Payme --}}
+        @if(isset($formData['cl']))
+            <input type="hidden" name="cl" value="{{ $formData['cl'] }}"/>
+        @endif
+
         {{-- Опциональное поле detail для фискализации --}}
         @if(isset($formData['detail']))
             <input type="hidden" name="detail" value="{{ $formData['detail'] }}"/>

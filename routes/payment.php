@@ -6,10 +6,33 @@ use Illuminate\Support\Facades\Route;
 
 // Payme routes with proper middleware exclusion
 Route::post('/payme/callback', [PaymeController::class, 'callback'])->name('payme.callback.handler')->withoutMiddleware(\App\Http\Middleware\CheckUserSession::class);
-Route::get('/payme/status/{order_id?}', [PaymeController::class, 'status'])->name('payme.status.handler');
 
-// Новый маршрут для обработки платежей через форму
-Route::get('/like-balance/status', [PaymeController::class, 'status'])->name('like.balance.status');
+// Обработка статуса платежа (любым методом - GET или POST) 
+Route::match(['get', 'post'], '/payme/status/{order_id?}', [PaymeController::class, 'status'])
+    ->name('payme.status.handler')
+    ->withoutMiddleware(\App\Http\Middleware\CheckUserSession::class);
+
+// Устаревшие маршруты для обратной совместимости, перенаправляют на payme/status
+Route::get('/like-balance/status', function() {
+    $order_id = request('order_id');
+    $is_cancelled = request('cancel') == '1';
+    
+    // Логируем для отладки
+    \Log::info('Intercepted /like-balance/status request', [
+        'order_id' => $order_id,
+        'is_cancelled' => $is_cancelled,
+        'query_string' => request()->getQueryString(),
+        'all_params' => request()->all()
+    ]);
+    
+    if ($order_id) {
+        if ($is_cancelled) {
+            return redirect('/payme/status/' . $order_id . '?cancel=1');
+        }
+        return redirect('/payme/status/' . $order_id . '?success=1');
+    }
+    return redirect()->route('like_balance.topup');
+})->name('like.balance.status');
 
 // Настраиваем маршрут для топап-статса (который используется в POST-форме)
 Route::get('/like-balance/topup-status/{orderId?}', [PaymeController::class, 'status'])->name('like_balance.topup_status');

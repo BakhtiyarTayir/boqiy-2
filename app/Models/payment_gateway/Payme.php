@@ -96,8 +96,13 @@ class Payme extends Model
             'updated_at' => now()
         ]);
         
-        // Use the new status route
-        $return_url = route('payme.status', ['order_id' => $order_id]);
+        // Use the absolute URL for return path instead of route name
+        $return_url = url('/payme/status/' . $order_id . '?success=1');
+        $cancel_url = url('/payme/status/' . $order_id . '?cancel=1');
+        
+        // В качестве резервного варианта сохраняем полный URL в сессии
+        session(['payme_return_url' => $return_url]);
+        session(['payme_cancel_url' => $cancel_url]);
         
         // Prepare data for checkout URL
         $params = [
@@ -106,16 +111,20 @@ class Payme extends Model
             'ac.user_id' => $user_id,
             'a' => $amount,
             'l' => App::getLocale(),
-            'c' => $return_url,
+            'c' => $return_url,  // URL возврата с полным абсолютным путем
             'ct' => 0, // Lifetime in minutes (0 = no limit)
             'cr' => 'UZS',
-            'd' => isset($payment_details['description']) ? $payment_details['description'] : 'Like balance top-up'
+            'd' => isset($payment_details['description']) ? $payment_details['description'] : 'Like balance top-up',
+            'cl' => $cancel_url  // URL для отмены платежа
         ];
         
         // Логируем параметры для отладки
         Log::info('Payme checkout parameters', [
             'params' => $params,
-            'checkout_url' => $checkout_url
+            'checkout_url' => $checkout_url,
+            'return_url' => $return_url,
+            'cancel_url' => $cancel_url,
+            'cl_param' => $params['cl']
         ]);
         
         // Build checkout URL

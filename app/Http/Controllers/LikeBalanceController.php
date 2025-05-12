@@ -103,9 +103,12 @@ class LikeBalanceController extends Controller
             $merchantId = $paymeGateway->test_mode == 1 ? $paymeSettings['merchant_id'] : $paymeSettings['merchant_id_live'];
             $amountTiyin = round($amount * 100); // Конвертируем в тийины (1 сум = 100 тийин)
             
-            // URL для возврата после оплаты
+            // URL для возврата после оплаты и отмены
             $baseUrl = config('app.url', 'https://boqiy.uz'); 
-            $clientReturnUrl = $baseUrl . '/like-balance/status?order_id=' . $order->order_id;
+            // URL для возврата при успешной оплате
+            $clientReturnUrl = $baseUrl . '/payme/status/' . $order->order_id . '?success=1';
+            // URL для возврата при отмене оплаты
+            $clientCancelUrl = $baseUrl . '/payme/status/' . $order->order_id . '?cancel=1';
             
             // URL для отправки POST-формы
             $checkoutUrl = rtrim($paymeSettings['checkout_url'], '/');
@@ -124,7 +127,9 @@ class LikeBalanceController extends Controller
                 'lang' => app()->getLocale(),
                 'callback' => $clientReturnUrl,
                 'callback_timeout' => 15000, // 15 секунд
-                'description' => $description
+                'description' => $description,
+                // URL для отмены платежа в соответствии с документацией Payme
+                'cl' => $clientCancelUrl // Параметр "cl" для отмены, не cancel_url!
             ];
 
             // Возвращаем view с POST-формой
