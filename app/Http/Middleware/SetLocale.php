@@ -25,8 +25,10 @@ class SetLocale
             $language = Session::get('active_language');
         } else {
             // Получаем язык по умолчанию из настроек
-            $languageSetting = DB::table('settings')->where('type', 'system_language')->first();
-            $language = $languageSetting ? $languageSetting->description : 'uz'; // По умолчанию используем узбекский язык
+            // $languageSetting = DB::table('settings')->where('type', 'system_language')->first();
+            // dd($languageSetting);
+            // $language = $languageSetting ? $languageSetting->description : 'uz'; // По умолчанию используем узбекский язык
+            $language = 'uz'; // По умолчанию используем узбекский язык
             
             // Сохраняем язык в сессии
             Session::put('active_language', $language);

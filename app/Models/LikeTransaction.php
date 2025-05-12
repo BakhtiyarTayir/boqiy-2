@@ -11,6 +11,7 @@ class LikeTransaction extends Model
     
     protected $fillable = [
         'like_balance_id',
+        'user_id',
         'amount',
         'type',
         'description',
@@ -23,6 +24,14 @@ class LikeTransaction extends Model
     public function likeBalance()
     {
         return $this->belongsTo(LikeBalance::class);
+    }
+    
+    /**
+     * Получить пользователя, к которому относится эта транзакция
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
     
     /**

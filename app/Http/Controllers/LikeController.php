@@ -197,7 +197,7 @@ class LikeController extends Controller
         $user = Auth::user();
         $post = Posts::where('post_id', $request->post_id)->first();
         $like = Like::findOrFail($request->like_id);
-        
+        dd($user->id);
         // Проверяем, есть ли у пользователя баланс лайков
         $likeBalance = $user->likeBalance;
         

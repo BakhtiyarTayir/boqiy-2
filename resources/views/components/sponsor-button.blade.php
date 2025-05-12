@@ -1,0 +1,1 @@
+/home/bakhtiyar/work/boqiy.uz/web/resources/views/components/sponsor-button.blade.php

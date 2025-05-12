@@ -45,6 +45,7 @@ class LikeBalance extends Model
         $this->save();
         
         return $this->transactions()->create([
+            'user_id' => $this->user_id,
             'amount' => $amount,
             'type' => $type,
             'description' => $description,
@@ -77,6 +78,7 @@ class LikeBalance extends Model
         
         // Создаем запись о транзакции
         return $this->transactions()->create([
+            'user_id' => $this->user_id,
             'amount' => $amount,
             'type' => $type,
             'description' => $description,

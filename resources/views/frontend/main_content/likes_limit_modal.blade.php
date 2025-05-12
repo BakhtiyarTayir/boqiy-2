@@ -19,8 +19,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ get_phrase('Close') }}</button>
-        <button class="btn btn-primary btn-show-gift-modal">{{ get_phrase('Browse Posts') }}</button>
+        <a href="{{ route('timeline') }}" class="btn btn-primary">{{ get_phrase('Browse Posts') }}</a>
       </div>
     </div>
   </div>
-</div>
+</div> 

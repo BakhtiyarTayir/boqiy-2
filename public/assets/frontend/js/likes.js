@@ -33,13 +33,10 @@ $('.btn-show-gift-modal').on('click', function () {
     $('#likesLimitModal').modal('hide');
     
     const target = $('.like-boxes').first();
-    console.log(13, target.html());
     if (target.length) {
-        console.log(1);
         
         target.removeClass('d-none').focus();
     } else {
-        console.log(13244);
         
         $('#redirectLikeBalanceModal').modal('show');
     }
@@ -67,7 +64,6 @@ function showLikesPanel(postId) {
 
 // Функция для проверки баланса и отправки лайка
 function sendLike(postId, likeTypeId, likePrice) {
-    console.log('Sending like for post', postId, 'with type', likeTypeId, 'and price', likePrice);
     
     // Store the clicked button element
     window.lastClickedLikeButton = event ? event.target : null;
@@ -83,7 +79,6 @@ function sendLike(postId, likeTypeId, likePrice) {
             post_id: postId // Add post_id to the request
         },
         success: function(response) {
-            console.log('Balance check response:', response);
             
             if (response.success) {
                 // Если баланс достаточен, отправляем лайк
@@ -94,7 +89,6 @@ function sendLike(postId, likeTypeId, likePrice) {
             }
         },
         error: function(xhr, status, error) {
-            console.error('Error checking balance:', error, xhr.responseText);
             $.toast({
                 content: 'Произошла ошибка при проверке баланса',
                 position: 'top-right',

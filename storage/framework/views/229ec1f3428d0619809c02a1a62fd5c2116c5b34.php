@@ -20,8 +20,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo e(get_phrase('Close')); ?></button>
-        <button class="btn btn-primary btn-show-gift-modal"><?php echo e(get_phrase('Browse Posts')); ?></button>
+        <a href="<?php echo e(route('timeline')); ?>" class="btn btn-primary"><?php echo e(get_phrase('Browse Posts')); ?></a>
       </div>
     </div>
   </div>
-</div><?php /**PATH D:\OSPanel\home\boqiy-a.local\public\resources\views/frontend/main_content/likes_limit_modal.blade.php ENDPATH**/ ?>
+</div> <?php /**PATH D:\OSPanel\home\boqiy-a.local\public\resources\views/frontend/main_content/likes_limit_modal.blade.php ENDPATH**/ ?>

@@ -1,7 +1,6 @@
-body{
-    height: 100vh;
-    overflow: auto;
- }
+body,html{
+    overflow-x: hidden;
+}
 a.story-entry video {
     height: 196px;
     width: -webkit-fill-available;

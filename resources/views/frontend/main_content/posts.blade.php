@@ -1,6 +1,5 @@
 @php
     $mutualFriendsData = [];
-	
 	if (!empty($friendships) && count($friendships)) {
 		foreach ($friendships as $friendship) {
 			if ($friendship->requester == $user_info->id) {

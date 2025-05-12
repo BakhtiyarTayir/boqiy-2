@@ -1,0 +1,1 @@
+/home/bakhtiyar/work/boqiy.uz/web/public/js/temp.js

@@ -24,7 +24,7 @@
         ->get();
     
     $tagged_user_ids = json_decode($post->tagged_user_ids);
-
+    
 @endphp
 @php $user_reacts = json_decode($post->user_reacts, true); @endphp
 
@@ -40,15 +40,15 @@
                 @elseif (isset($type) && $type == 'group')
                     <div class="flex-shrink-0">
                         <img src="{{ get_user_image('storage/userimage/' . $post->photo, 'optimized') }}"
-                             class="rounded-circle" alt="...">
+                            class="rounded-circle" alt="...">
                     </div>
                 @elseif (isset($type) && $type == 'video')
                     <div class="entry-header d-flex justify-content-between">
                         <div class="ava-info d-flex align-items-center">
                             <div class="flex-shrink-0">
                                 <img src="{{ get_user_image($post->photo, 'optimized') }}"
-                                     class="rounded rounded-circle" alt="...">
-                            
+                                    class="rounded rounded-circle" alt="...">
+
                             </div>
                             <div class="ava-desc ms-2">
                                 <h3 class="mb-0">{{ $post->name }} <a href="#">{{ get_phrase('Follow') }}</a>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="post-controls dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                                data-bs-toggle="dropdown" aria-expanded="false">
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="#"><img
@@ -81,17 +81,17 @@
                 @elseif (isset($type) && $type == 'paid_content')
                     <div class="flex-shrink-0">
                         <img src="{{ get_user_image($post->user_id, 'optimized') }}"
-                             class="rounded-circle user_image_show_on_modal" alt="...">
+                            class="rounded-circle user_image_show_on_modal" alt="...">
                     </div>
                 @elseif (isset($type) && $type == 'user_post')
                     <div class="flex-shrink-0">
                         <img src="{{ get_user_image($post->user_id, 'optimized') }}"
-                             class="rounded-circle user_image_show_on_modal" alt="...">
+                            class="rounded-circle user_image_show_on_modal" alt="...">
                     </div>
                 @else
                     <div class="flex-shrink-0">
                         <img src="{{ get_user_image($post->id, 'optimized') }}"
-                             class="rounded-circle user_image_show_on_modal" alt="...">
+                            class="rounded-circle user_image_show_on_modal" alt="...">
                     </div>
                 @endif
                 <div class="ava-desc ms-2">
@@ -100,20 +100,20 @@
                             <a class="text-black" href="{{ route('single.page', $post->id) }}">{{ $post->title }}</a>
                         @elseif (isset($type) && $type == 'group')
                             <a class="text-black"
-                               href="{{ route('user.profile.view', $post->user_id) }}">{{ $post->name }}</a>
+                                href="{{ route('user.profile.view', $post->user_id) }}">{{ $post->name }}</a>
                         @else
                             <a class="text-black"
-                               href="{{ route('user.profile.view', $post->user_id) }}">{{ $post->getUser->name }}</a>
+                                href="{{ route('user.profile.view', $post->user_id) }}">{{ $post->getUser->name }}</a>
                         @endif
-                    <!-- Check tagged users -->
-                        
+                        <!-- Check tagged users -->
+
                         @if ($post->post_type == 'live_streaming')
                             <small class="text-muted">{{ get_phrase('is live now') }}</small>
                         @endif
-                        
+
                         @if (count($tagged_user_ids) > 0 || $post->activity_id > 0)
                             <small class="text-muted">-</small>
-                            
+
                             <!-- Feeling and activity -->
                             @if ($post->activity_id > 0)
                                 @php
@@ -128,22 +128,22 @@
                                     <b> {{ $feeling_and_activities->title }} </b>
                                 @endif
                             @endif
-                            
+
                             @if (count($tagged_user_ids) > 0)
                                 <small class="text-muted">{{ get_phrase('with') }}</small>
                                 @foreach ($tagged_user_ids as $key => $tagged_user_id)
                                     <small class="text-muted">@php
-                                            if ($key > 0) {
-												echo ',';
-											}
-                                        @endphp</small>
+                                        if ($key > 0) {
+                                            echo ',';
+                                        }
+                                    @endphp</small>
                                     <a class="text-black"
-                                       href="{{ route('profile') }}">{{ DB::table('users')->where('id', $tagged_user_id)->value('name') }}</a>
+                                        href="{{ route('profile') }}">{{ DB::table('users')->where('id', $tagged_user_id)->value('name') }}</a>
                                 @endforeach
-                            
+
                             @endif
                         @endif
-                        
+
                         @if (!empty($post->location))
                             <small class="text-muted">{{ get_phrase('in') }}</small> <a
                                 href="https://www.google.com/maps/place/{{ $post->location }}"
@@ -151,7 +151,7 @@
                         @endif
                     </h3>
                     <span class="meta-time text-muted">{{ date_formatter($post->created_at, 2) }}</span>
-                    
+
                     @if ($post->privacy == 'public')
                         <span class="meta-privacy text-muted" title="{{ ucfirst(get_phrase($post->privacy)) }}"><i
                                 class="fa-solid fa-earth-americas"></i></span>
@@ -166,19 +166,19 @@
             </div>
             <div class="post-controls dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false">
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <input type="hidden" id="copy_post_{{ $post->post_id }}"
-                           value="{{ route('single.post', $post->post_id) }}">
+                        value="{{ route('single.post', $post->post_id) }}">
                     <li><a class="dropdown-item" href="javascript:void(0)" value="copy"
-                           onclick="copyToClipboard('copy_post_{{ $post->post_id }}')"><img
+                            onclick="copyToClipboard('copy_post_{{ $post->post_id }}')"><img
                                 src="{{ asset('storage/images/link.png') }}"
                                 alt="">{{ get_phrase('Copy Link') }}</a></li>
-                    
+
                     <li><a class="dropdown-item" href="javascript:void(0)"
-                           onclick="showCustomModal('{{ route('load_modal_content', ['view_path' => 'frontend.main_content.create_report', 'post_id' => $post->post_id]) }}', '{{ get_phrase('Report Post') }}');"
-                           data-bs-toggle="modal" data-bs-target="#createEvent"><img
+                            onclick="showCustomModal('{{ route('load_modal_content', ['view_path' => 'frontend.main_content.create_report', 'post_id' => $post->post_id]) }}', '{{ get_phrase('Report Post') }}');"
+                            data-bs-toggle="modal" data-bs-target="#createEvent"><img
                                 src="{{ asset('storage/images/report.png') }}"
                                 alt="">{{ get_phrase('Report') }}
                         </a></li>
@@ -187,7 +187,7 @@
         </div>
         <div class="entry-content pt-2">
             @if ($post->post_type == 'general' || $post->post_type == 'profile_picture' || $post->post_type == 'cover_photo')
-                
+
                 
                 <div class="row" id="postMediaSection{{ $post->post_id }}">
                     <div class="col-12">
@@ -207,35 +207,35 @@
                                         break;
                                     }
                                 @endphp
-                                
+
                                 @if ($media_file->file_type == 'video')
                                     @if (File::exists('public/storage/post/videos/' . $media_file->file_name))
                                         @if ($media_files_count > 1)
                                             <a class="position-relative"
-                                               onclick="showCustomModal('{{ route('preview_post', ['post_id' => $post->post_id, 'file_name' => $media_file->file_name]) }}', '{{ get_phrase('Preview') }}', 'xxl')"
-                                               href="javascript:void(0)">
-                                                @endif
-                                                
-                                                <video muted controlsList="nodownload" controls
-                                                       class="plyr-js w-100 rounded video-thumb @if ($media_files_count > 1) initialized @endif">
-                                                    <source src="{{ get_post_video($media_file->file_name) }}"
-                                                            type="">
-                                                </video>
-                                                
-                                                @if ($more_unloaded_images > 0 && $key == 4)
-                                                    <div class="more_image_overlap"><span><i class="fa-solid fa-plus"></i>
+                                                onclick="showCustomModal('{{ route('preview_post', ['post_id' => $post->post_id, 'file_name' => $media_file->file_name]) }}', '{{ get_phrase('Preview') }}', 'xxl')"
+                                                href="javascript:void(0)">
+                                        @endif
+
+                                        <video muted controlsList="nodownload" controls
+                                            class="plyr-js w-100 rounded video-thumb @if ($media_files_count > 1) initialized @endif">
+                                            <source src="{{ get_post_video($media_file->file_name) }}"
+                                                type="">
+                                        </video>
+
+                                        @if ($more_unloaded_images > 0 && $key == 4)
+                                            <div class="more_image_overlap"><span><i class="fa-solid fa-plus"></i>
                                                     {{ $more_unloaded_images }} </span></div>
-                                                @endif
-                                                
-                                                @if ($media_files_count > 1)
+                                        @endif
+
+                                        @if ($media_files_count > 1)
                                             </a>
                                         @endif
                                     @endif
                                 @else
                                     <div class="picture text-center">
                                         <a onclick="showCustomModal('{{ route('preview_post', ['post_id' => $post->post_id, 'file_name' => $media_file->file_name]) }}', '{{ get_phrase('Preview') }}', 'xxl')"
-                                           href="javascript:void(0)">
-                                            
+                                            href="javascript:void(0)">
+
                                             @if ($more_unloaded_images > 0 && $key == 4)
                                                 @php $opacity = 'opacity-7'; @endphp
                                                 <div class="more_image_overlap"><span><i class="fa-solid fa-plus"></i>
@@ -243,10 +243,10 @@
                                             @else
                                                 @php $opacity = ''; @endphp
                                             @endif
-                                            
+
                                             <img src="{{ get_post_image($media_file->file_name) }}"
-                                                 class="w-100 h-100 @if ($media_files_count == 1) single-image-ration @endif {{ $opacity }}"
-                                                 alt="">
+                                                class="w-100 h-100 @if ($media_files_count == 1) single-image-ration @endif {{ $opacity }}"
+                                                alt="">
                                         </a>
                                     </div>
                                 @endif
@@ -254,23 +254,23 @@
                         </div>
                     </div>
                 </div>
-                
-                
-                
+
+
+
                 @if (!empty($post->location))
                     <div class="text-center">
                         <img width="200px" src="{{ asset('storage/images/map-pin.jpeg') }}"><br>
                         <a class="location-post me-auto ms-auto"
-                           href="https://www.google.com/maps/place/{{ $post->location }}" target="_blanck">
+                            href="https://www.google.com/maps/place/{{ $post->location }}" target="_blanck">
                             <img src="{{ asset('storage/images/location.png') }}">
                             <span>{{ $post->location }}</span>
                             <hr>
                             <small>@php
-                                    echo DB::table('posts')
-										->where('location', $post->location)
-										->get()
-										->count();
-                                @endphp {{ get_phrase('visits') }}</small>
+                                echo DB::table('posts')
+                                    ->where('location', $post->location)
+                                    ->get()
+                                    ->count();
+                            @endphp {{ get_phrase('visits') }}</small>
                         </a>
                     </div>
                 @endif
@@ -297,49 +297,49 @@
                                 $shared_id = end($explode_data);
                             @endphp
                             <iframe src="{{ $post->description }}?shared=yes" onload="resizeIframe(this)"
-                                    scrolling="no" class="w-100" frameborder="0"></iframe>
+                                scrolling="no" class="w-100" frameborder="0"></iframe>
                             <a class="ellipsis-line-1 ellipsis-line-2"
-                               href="{{ $post->description }}">{{ $post->description }}</a>
+                                href="{{ $post->description }}">{{ $post->description }}</a>
                         @endif
                     </div>
                 </div>
-            @elseif($post->post_type == 'album')
-            
-            
+           @elseif($post->post_type == 'album')
+
+
             @endif
-        
+
         </div>
-        <div class="e_comment">
+       <div class="e_comment">
             <div class="entry-footer @if (isset($_GET['shared'])) hidden-on-shared-view @endif">
                 <div class="footer-share d-flex justify-content-around">
                     <span class="entry-react post-react">
 
                         <a href="javascript:void(0)" onclick="myReact('post', 'like', 'toggle', {{ $post->post_id }})"
-                           id="my_post_reacts<?php echo $post->post_id; ?>">
+                            id="my_post_reacts<?php echo $post->post_id; ?>">
                             @include('frontend.main_content.post_reacts', ['my_react' => true])
                         </a>
 
                         <ul class="react-list">
                             <li><a href="javascript:void(0)"
-                                   onclick="myReact('post', 'like', 'update', {{ $post->post_id }})"><img
+                                    onclick="myReact('post', 'like', 'update', {{ $post->post_id }})"><img
                                         src="{{ asset('storage/images/r-like.png') }}" alt="Like"></a>
                             </li>
                             <li><a href="javascript:void(0)"
-                                   onclick="myReact('post', 'love', 'update', {{ $post->post_id }})"><img
+                                    onclick="myReact('post', 'love', 'update', {{ $post->post_id }})"><img
                                         src="{{ asset('storage/images/r-love.png') }}" alt="Love"></a>
                             </li>
                             <li><a href="javascript:void(0)"
-                                   onclick="myReact('post', 'sad', 'update', {{ $post->post_id }})"><img
+                                    onclick="myReact('post', 'sad', 'update', {{ $post->post_id }})"><img
                                         src="{{ asset('storage/images/r-cry1.png') }}" alt="Sad"></a>
                             </li>
                             <li><a href="javascript:void(0)"
-                                   onclick="myReact('post', 'angry', 'update', {{ $post->post_id }})"><img
+                                    onclick="myReact('post', 'angry', 'update', {{ $post->post_id }})"><img
                                         src="{{ asset('storage/images/r-angry.png') }}" alt="Angry"></a>
                             </li>
                         </ul>
                     </span>
                     <span class="entry-react"><a href="javascript:void(0)"
-                                                 onclick="$('#user-comments-{{ $post->post_id }}').toggle();"> <img width="19px" src="{{ asset('storage/images/comment2.svg') }}">{{ get_phrase('Comments') }}</a></span>
+                            onclick="$('#user-comments-{{ $post->post_id }}').toggle();"> <img width="19px" src="{{ asset('storage/images/comment2.svg') }}">{{ get_phrase('Comments') }}</a></span>
                     <span class="entry-react"><a href="javascript:void(0)" class="like-btn" data-post-id="{{ $post->post_id }}">
                             <img width="19px" src="{{ asset('storage/images/gift.svg') }}">{{ get_phrase('Like') }}</a></span>
                     <span class="entry-react" data-bs-toggle="modal" data-bs-target="#exampleModal"><a
@@ -355,7 +355,7 @@
                     <div class="post-comment">
                         <ul>
                             <li><a onclick="$('#user-comments-{{ $post->post_id }}').toggle();"
-                                   href="javascript:void(0)"><span
+                                    href="javascript:void(0)"><span
                                         id="post_comment_count{{ $post->post_id }}">{{ $total_comments }}</span>{{ get_phrase('Comments') }}</a>
                             </li>
                             <li><a href="javascript:void(0)"><span>0</span>{{ get_phrase('Share') }}</a></li>
@@ -369,11 +369,10 @@
     <div class="user-comments s_comment d-hidden bg-white" id="user-comments-{{ $post->post_id }}">
         <div class="comment-form d-flex bg-secondary">
             <img src="{{ get_user_image(Auth()->user()->photo, 'optimized') }}" alt=""
-                 class="rounded-circle img-fluid h-39" width="40px">
+                class="rounded-circle img-fluid h-39" width="40px">
             <form action="javascript:void(0)" class="w-100 ms-2" method="post">
                 <input class="form-control py-3" onkeypress="postComment(this, 0, {{ $post->post_id }}, 0,'post');"
-                       rows="1" placeholder="Write Comments">
-                <span>test16</span>
+                    rows="1" placeholder="{{ get_phrase('Write Comments') }}">
             </form>
         </div>
         <ul class="comment-wrap p-3 pb-0 list-unstyled" id="comments{{ $post->post_id }}">
@@ -383,10 +382,10 @@
                 'type' => 'post',
             ])
         </ul>
-        
+
         @if ($comments->count() < $total_comments)
             <a class="btn p-3 pt-0"
-               onclick="loadMoreComments(this, {{ $post->post_id }}, 0, {{ $total_comments }},'post')">{{ get_phrase('View more') }}</a>
+                onclick="loadMoreComments(this, {{ $post->post_id }}, 0, {{ $total_comments }},'post')">{{ get_phrase('View more') }}</a>
         @endif
     </div>
 </div><!--  Single Entry End -->

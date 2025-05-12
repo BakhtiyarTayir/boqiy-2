@@ -27,7 +27,7 @@
         @else
             <div class="no_data j_nodata mt-3 bg-white radius-8 p-20">
                 <div class="no_data_img eData">
-                    <span><svg  viewBox="0 0 1447 1374" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <span><svg width="1447" height="1374" viewBox="0 0 1447 1374" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_60_31)">
                         <rect x="376" y="70" width="884" height="166" rx="83" fill="#EDEDED"/>
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M43 429.5C43 348.038 109.038 282 190.5 282H1280.5C1361.96 282 1428 348.038 1428 429.5C1428 510.962 1361.96 577 1280.5 577H1239.98C1202.84 607.718 1179.55 651.899 1179.55 701C1179.55 755.127 1207.85 803.275 1251.8 834H1284.5C1374.25 834 1447 906.754 1447 996.5C1447 1086.25 1374.25 1159 1284.5 1159H186.5C96.7537 1159 24 1086.25 24 996.5C24 906.754 96.7537 834 186.5 834H219.402C263.353 803.275 291.657 755.127 291.657 701C291.657 651.899 268.365 607.718 231.23 577H190.5C109.038 577 43 510.962 43 429.5Z" fill="#EDEDED"/>

@@ -1,0 +1,1 @@
+/home/bakhtiyar/work/boqiy.uz/web/database/migrations/2024_03_21_create_sponsors_table.php
