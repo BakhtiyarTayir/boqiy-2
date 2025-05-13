@@ -153,6 +153,18 @@
 <!--Javascript
     ========================================================-->
 <script src="{{ asset('assets/frontend/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    // Исправление ошибки "Cannot read properties of undefined (reading 'classList')"
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            var originalIsAnimated = bootstrap.Modal.prototype._isAnimated;
+            bootstrap.Modal.prototype._isAnimated = function() {
+                if (!this._element) return false;
+                return originalIsAnimated.call(this);
+            };
+        }
+    });
+</script>
 <script src="{{ asset('assets/frontend/js/owl.carousel.min.js') }}"></script>
 <script src="{{ asset('assets/frontend/js/venobox.min.js') }}"></script>
 <script src="{{ asset('assets/frontend/js/timepicker.min.js') }}"></script>

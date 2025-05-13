@@ -209,25 +209,31 @@ $older_notification = Notification::where('reciver_user_id', auth()->user()->id)
 @endphp
 
 <div class="mobile-header hide-on-tablet">
-    <div class="balance-wrapper">
-        <span>
-            <i class="fas fa-wallet  fa-lg" ></i>
-        </span>
-        <span id="mobile-balance">
-            {{ $userWallet? $userWallet->balance : 0 }}
-        </span>
-    </div>
+    <a href="{{ route('wallet.index') }}" style="text-decoration: none; color: white;">
+        <div class="balance-wrapper d-flex align-items-center justify-content-center">
+            <span>
+                <i class="fas fa-wallet  fa-lg" ></i>
+            </span>
+            <span id="mobile-balance">
+                {{ $userWallet? $userWallet->balance : 0 }}
+            </span>
+        </div>
+    </a>
+
     <div class="logo-wrapper">
         <a href="{{ route('allproducts') }}" class="text-white2">
             <span class="element-pulse text-white">{{ get_phrase('Marketplace') }}</span>
         </a>
     </div>
-    <div class="like-wrapper">
-        <div>
-            <span><i class="fas fa-thumbs-up fa-lg"> </i></span>
+
+    <a href="{{ route('like_balance.index') }}" style="text-decoration: none; color: white;">
+        <div class="like-wrapper">
+            <div>
+                <span><i class="fas fa-thumbs-up fa-lg"> </i></span>
+            </div>
+            <div>{{ $userLikeBalance ? $userLikeBalance->balance : 0 }}</div>
         </div>
-        <div>{{ $userLikeBalance ? $userLikeBalance->balance : 0 }}</div>
-    </div>
+    </a>
 </div>
 
 <!-- Header End -->

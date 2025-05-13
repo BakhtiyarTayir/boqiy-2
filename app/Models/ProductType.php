@@ -10,7 +10,7 @@ class ProductType extends Model
 
 	protected $primaryKey = 'id';
 	
-	public $timestamps = false; // Agar created_at va updated_at bo‘lmasa
+	public $timestamps = false; // Agar created_at va updated_at bo'lmasa
 	
 	protected $fillable = [
 		'name',
@@ -22,4 +22,20 @@ class ProductType extends Model
 		'is_deleted',
 		'created_date',
 	];
+    
+    /**
+     * Получить цену спонсора без лишних десятичных нулей
+     */
+    public function getPriceForSponsorFormattedAttribute()
+    {
+        return number_format($this->price_for_sponsor, 0, '.', ' ');
+    }
+    
+    /**
+     * Получить цену для всех без лишних десятичных нулей
+     */
+    public function getPriceForEveryOneFormattedAttribute()
+    {
+        return number_format($this->price_for_every_one, 0, '.', ' ');
+    }
 }

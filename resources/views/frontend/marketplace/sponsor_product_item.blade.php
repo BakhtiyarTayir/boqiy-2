@@ -39,7 +39,7 @@
                     <div class="eProduct_details">
                         <div class="product-info  np_info_pro">
                             <h1 class="product-title h4 fw-7">Nomi: {{ $product->name }}</h1>
-                            <span class="pt-price  sub-title">Narxi: {{ $product->price_for_sponsor }} so'm</span>
+                            <span class="pt-price  sub-title">Narxi: {{ $product->price_for_sponsor_formatted }} so'm</span>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                             <h3 class="h6"><a href="{{ route('single.product',$related_product->id) }}"> {{ ellipsis($related_product->name, 15) }}</a></h3>
                              <h5 class="my-3">Sponsor: {{ $related_product->sponsor_name }}</h5>
                             <a href="{{ route('single.product',$related_product->id) }}" class="btn common_btn d-block">
-                                {{ $related_product->price_for_every_one }}
+                                {{ number_format($related_product->price_for_every_one, 0, '.', ' ') }}
                                 
                             </a>
                          </div>

@@ -293,14 +293,14 @@ function showLikeAnimation(postId, likeUrl, allAnimations) {
 
 // Function to rotate animations
 function rotateAnimations(postContainer) {
-    console.log('Starting rotation for container:', postContainer);
+
     
     postContainer.data('isRotating', true);
     
     const animationQueue = postContainer.data('animationQueue');
     let currentIndex = postContainer.data('currentAnimationIndex');
     
-    console.log('Animation queue:', animationQueue, 'Current index:', currentIndex);
+    // console.log('Animation queue:', animationQueue, 'Current index:', currentIndex);
     
     if (!animationQueue || animationQueue.length === 0) {
         console.log('No animations to rotate, stopping');
@@ -310,18 +310,18 @@ function rotateAnimations(postContainer) {
     
     // Get the permanent animation container
     const permanentAnimationContainer = postContainer.find('.permanent-like-animation');
-    console.log('Found animation container:', permanentAnimationContainer.length ? 'yes' : 'no');
+    // console.log('Found animation container:', permanentAnimationContainer.length ? 'yes' : 'no');
     
     // Clear the container
     permanentAnimationContainer.empty();
     
     // Get the current animation URL
     let currentUrl = animationQueue[currentIndex];
-    console.log('Current URL before processing:', currentUrl);
+
     
     // Make sure we don't have a comma-separated URL (which would be an error)
     if (currentUrl && currentUrl.includes(',')) {
-        console.log('Found comma in URL, splitting:', currentUrl);
+        // console.log('Found comma in URL, splitting:', currentUrl);
         
         // If we accidentally have a comma-separated string, split it and update the queue
         const splitUrls = currentUrl.split(',').filter(url => url.trim() !== '');
@@ -336,40 +336,40 @@ function rotateAnimations(postContainer) {
         // Use the first URL from the split
         currentUrl = splitUrls[0];
         
-        console.log('Fixed comma-separated URL. New queue:', newQueue, 'New current URL:', currentUrl);
+        // console.log('Fixed comma-separated URL. New queue:', newQueue, 'New current URL:', currentUrl);
     }
     
     // Add the current animation
     if (currentUrl) {
-        console.log('Adding animation to container:', currentUrl);
+        // console.log('Adding animation to container:', currentUrl);
         const animationElement = $('<img src="' + currentUrl + '" alt="Like">');
         permanentAnimationContainer.append(animationElement);
         
-        console.log('Showing animation:', currentUrl);
+        // console.log('Showing animation:', currentUrl);
     } else {
         console.log('No valid URL to display');
     }
     
     // Move to the next animation after 15 seconds
     setTimeout(function() {
-        console.log('Rotating to next animation');
+        // console.log('Rotating to next animation');
         
         // Get the updated animation queue
         const updatedQueue = postContainer.data('animationQueue');
-        console.log('Updated queue:', updatedQueue);
+
         
         if (updatedQueue && updatedQueue.length > 0) {
             // Increment the index, wrapping around if necessary
             currentIndex = (currentIndex + 1) % updatedQueue.length;
             postContainer.data('currentAnimationIndex', currentIndex);
             
-            console.log('New index:', currentIndex);
+            // console.log('New index:', currentIndex);
             
             // Continue rotation
             rotateAnimations(postContainer);
         } else {
             // If the queue is empty, stop rotating
-            console.log('Queue is empty, stopping rotation');
+            // console.log('Queue is empty, stopping rotation');
             postContainer.data('isRotating', false);
         }
     }, 15000); // 15 seconds
@@ -511,7 +511,6 @@ function savePermanentAnimation(postId, likeUrl) {
 
 // Load permanent animations when the page loads
 $(document).ready(function() {
-    console.log('Initializing animations on page load');
     
     // Check if posts have post_animation attribute and add the permanent animation
     $('.single-item-countable, .post-item, .post, [data-post-id]').each(function() {
@@ -519,7 +518,6 @@ $(document).ready(function() {
         const postId = postContainer.data('post-id') || postContainer.attr('id')?.replace('postIdentification', '') || '';
         const postAnimation = postContainer.data('post-animation') || '';
         
-        console.log('Processing post:', postId, 'Animation:', postAnimation);
         
         // Skip if no post ID
         if (!postId) {
@@ -532,9 +530,8 @@ $(document).ready(function() {
         postContainer.data('currentAnimationIndex', 0);
         postContainer.data('isRotating', false);
         
-        // If the post has a permanent animation from the server-side rendering
         if (postAnimation && postAnimation !== '') {
-            console.log('Post has animation:', postAnimation);
+            // console.log('Post has animation:', postAnimation);
             
             // Make sure the container has position relative
             if (postContainer.css('position') !== 'relative' && postContainer.css('position') !== 'absolute') {
@@ -565,7 +562,6 @@ $(document).ready(function() {
             // Set the animation queue
             postContainer.data('animationQueue', animationQueue);
             
-            console.log('Post ID:', postId, 'Animation Queue:', animationQueue);
             
             // Start the rotation if there are animations
             if (animationQueue.length > 0 && !postContainer.data('isRotating')) {
@@ -580,13 +576,13 @@ $(document).ready(function() {
 
 // Function to fetch animations for a post
 function fetchPostAnimations(postId, postContainer) {
-    console.log('Fetching animations for post:', postId);
+    // console.log('Fetching animations for post:', postId);
     
     $.ajax({
         url: '/get-post-likes-count/' + postId,
         type: 'GET',
         success: function(response) {
-            console.log('Received response for post', postId, ':', response);
+            // console.log('Received response for post', postId, ':', response);
             
             if (response.success && response.has_animations && response.animations) {
                 console.log('Post has animations in response');
@@ -625,11 +621,11 @@ function fetchPostAnimations(postId, postContainer) {
                     // Create the permanent animation container if it doesn't exist
                     let permanentAnimationContainer = postContainer.find('.permanent-like-animation');
                     if (permanentAnimationContainer.length === 0) {
-                        console.log('Creating new animation container');
+                        // console.log('Creating new animation container');
                         permanentAnimationContainer = $('<div class="permanent-like-animation"></div>');
                         postContainer.append(permanentAnimationContainer);
                     } else {
-                        console.log('Using existing animation container');
+                        // console.log('Using existing animation container');
                         // Clear any existing content
                         permanentAnimationContainer.empty();
                     }
@@ -642,7 +638,7 @@ function fetchPostAnimations(postId, postContainer) {
                     
                     // Start rotation if not already running
                     if (!postContainer.data('isRotating')) {
-                        console.log('Starting rotation');
+                        // console.log('Starting rotation');
                         rotateAnimations(postContainer);
                     } else {
                         console.log('Rotation already running');
@@ -651,7 +647,7 @@ function fetchPostAnimations(postId, postContainer) {
                     console.log('No valid animations after processing');
                 }
             } else {
-                console.log('No animations in response or response not successful');
+                // console.log('No animations in response or response not successful');
             }
         },
         error: function(xhr, status, error) {

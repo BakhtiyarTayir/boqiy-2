@@ -57,12 +57,12 @@
                             <h1 class="product-title h4 fw-7 my-2">
                                 {{ $product->name }}
                                 @if ($product->is_sold)
-                                    <span class="badge bg-warning text-dark ml-2">Sovg‘a topshirilgan</span>
+                                    <span class="badge bg-warning text-dark ml-2">Sovg'a topshirilgan</span>
                                 @endif
                             </h1>
                             
                             <span class="product-title h4 fw-7 my-2">Narxi: </span>
-                            <del><span class="pt-price  sub-title">{{ $product->price_for_every_one }} so'm</span></del>
+                            <del><span class="pt-price  sub-title">{{ number_format($product->price_for_every_one, 0, '.', ' ') }} so'm</span></del>
                             <span style="color: firebrick" class="pt-price fa-lg sub-title ml-3">{{ 'O so\'m' }}</span>
                             
                             
@@ -283,11 +283,11 @@
                             <h3 class="h6">
                                 <a href="{{ route('single.product',$related_product->id) }}"> {{ ellipsis($related_product->name, 15) }}</a>
                                 @if ($related_product->is_sold)
-                                    <span class="badge bg-warning text-dark ml-2">Sovg‘a topshirilgan</span>
+                                    <span class="badge bg-warning text-dark ml-2">Sovg'a topshirilgan</span>
                                 @endif
                             </h3>
                             <a href="{{ route('single.product',$related_product->id) }}" class="btn common_btn d-block">
-                                {{ $related_product->price_for_every_one }}
+                                {{ number_format($related_product->price_for_every_one, 0, '.', ' ') }}
                             
                             </a>
                         </div>
@@ -382,7 +382,7 @@
             var file = event.target.files[0];
             
             if (file) {
-                // Fayl nomi va preview rasmni ko‘rsatish
+                // Fayl nomi va preview rasmni ko'rsatish
                 $('#file-name').text(file.name);
                 $('#file-notification').show();
                 
@@ -392,7 +392,7 @@
                 }
                 reader.readAsDataURL(file);
             } else {
-                // Fayl tanlanmagan bo‘lsa, hammasini yashirish
+                // Fayl tanlanmagan bo'lsa, hammasini yashirish
                 $('#file-notification').hide();
                 $('#image-preview').attr('src', '');
             }
@@ -402,7 +402,7 @@
             $('#image-upload').val(''); // Fayl inputni tozalash
             $('#file-notification').hide(); // Xabarni yashirish
             $('#image-preview').attr('src', ''); // Previewni tozalash
-            $('#file-name').text(''); // Fayl nomini o‘chirish
+            $('#file-name').text(''); // Fayl nomini o'chirish
         });
         
         let $btnViewMore = $('.btn-view-more');

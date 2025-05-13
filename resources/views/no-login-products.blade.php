@@ -151,7 +151,7 @@
 												<h3 class="h6"><a href="#"> {{ ellipsis($product->name, 30) }} </a></h3>
 												<div class="prodoct-footer mt-0 np_footer">
 													<a href="#" class="btn common_btn" style="width: 40px">
-														{{ $product->price_for_every_one }}  so`m
+														{{ number_format($product->price_for_every_one, 0, '.', ' ') }}  so`m
 													</a>
 												</div>
 											</div>

@@ -71,12 +71,12 @@
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <span class="fw-bold text-dark">{{ $product->price_for_sponsor }}</span>
+                                            <span class="fw-bold text-dark">{{ number_format($product->price_for_sponsor, 0, '.', ' ') }}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-column">
-                                            <span class="fw-bold text-dark">{{ $product->price_for_every_one }}</span>
+                                            <span class="fw-bold text-dark">{{ number_format($product->price_for_every_one, 0, '.', ' ') }}</span>
                                         </div>
                                     </td>
                                     <td>

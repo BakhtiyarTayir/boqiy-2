@@ -15,7 +15,7 @@
                 </h3>
                 
                 <a href="{{ route('single.product',$product->id) }}" class="btn common_btn d-block mt-2">
-                    {{ $product->price_for_every_one }} so`m
+                    {{ number_format($product->price_for_every_one, 0, '.', ' ') }} so`m
                 </a>
                 
                 @if (!$product->is_anonymous_sponsor)
