@@ -83,6 +83,19 @@
                             @enderror
                         </div>
                     </div>
+
+                    @if (!empty($freeProduct) && $sponsor_id)
+                        <div class="row mt-4 my-4">
+                            <div class="col-md-6 offset-2">
+                                <a href="{{ route('admin.user.edit', ['id' => $sponsor_id]) }}" class="btn btn-primary">View Sponsor</a>
+
+                                <button type="button" id="btnSponsorCopy" class="btn btn-secondary btn-copy-address"
+                                        data-copy-data="{{ $sponsorFullAddress }}">
+                                    Copy Address Sponsor
+                                </button>
+                            </div>
+                        </div>
+                    @endif
     
                     <div class="row mt-4">
                         <label for="text_for_sponsor" class="form-label col-md-2 text-end">
@@ -116,6 +129,39 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
+
+                    @if (!empty($freeProduct) && $receiver_id)
+                        <div class="row mt-4 my-4">
+                            <div class="col-md-6 offset-2">
+                                <a href="{{ route('admin.user.edit', ['id' => $receiver_id]) }}" class="btn btn-primary">View Receiver</a>
+
+                                <button type="button" id="btnReceiverCopy" class="btn-copy-address btn btn-secondary" data-copy-data="{{ $receiverFullAddress }}">
+                                    Copy Address Receiver
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                    <script>
+                        $('.btn-copy-address').on('click', function (e) {
+                            navigator.clipboard.writeText($(this).data('copyData'));
+
+                            e.preventDefault();
+                        })
+                    </script>
+
+                    <div class="row mt-4 form-check my-4">
+                        <div class="col-md-6 offset-2">
+                            <input class="form-check-input" type="checkbox" name="is_ordered"
+                                   id="is_ordered"
+                                   value="1"
+                                    {{ old('is_ordered', $isUpdate && isset($freeProduct) ? $freeProduct->is_ordered : 0) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_ordered">
+                                Tovar Zakaz qilindi
+                            </label>
+                        </div>
+
                     </div>
     
                     <div class="row mt-4">

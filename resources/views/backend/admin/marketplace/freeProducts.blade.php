@@ -66,8 +66,10 @@
                                         <span class="fw-bold text-dark">{{ $freeProduct->product_name }}
                                             @if (!$freeProduct->is_active)
                                                 <span class="badge bg-danger text-white ml-2">Sovg'a active emas</span>
+                                            @elseif ($freeProduct->is_ordered)
+                                                <span class="badge bg-success text-dark ml-2">Sovg‘a topshirilgan</span>
                                             @elseif ($freeProduct->is_sold)
-                                                <span class="badge bg-warning text-dark ml-2">Sovg‘a topshirilgan</span>
+                                                <span class="badge bg-warning text-dark ml-2">Sovg‘a xarid qilingan</span>
                                             @endif
                                         </span>
                                     </div>

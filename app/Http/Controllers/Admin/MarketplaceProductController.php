@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Currency;
+use Illuminate\Support\Facades\DB as DataBase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Session;
@@ -352,6 +353,34 @@ class MarketplaceProductController extends Controller
 		return view('backend.index', $page_data);
 	}
 	
+	public function getUnshippedOrders()
+	{
+		$freeProducts = \Illuminate\Support\Facades\DB::table('free_products')
+			->join('product_types as pt', 'pt.id', '=', 'free_products.product_type_id')
+			->join('users as sponsors', 'sponsors.id', '=', 'free_products.sponsor_id')
+			->join('users as receivers', 'receivers.id', '=', 'free_products.receiver_id')
+			->select(
+				'free_products.*',
+				'pt.name as product_name',
+				'pt.file_path as file_path',
+				'sponsors.name as sponsor_name',
+				'receivers.name as receiver_name'
+			)
+			->where('free_products.is_sold', 1)
+			->where('free_products.is_active', 1)
+			->where('free_products.is_ordered', 0)
+			->get();
+
+		$page_data = [
+			'freeProducts' => $freeProducts,
+			'page_name' => 'marketplace_products',
+			'page_title' => get_phrase('Marketplace Products'),
+			'view_path' => 'marketplace/freeProducts'
+		];
+		
+		return view('backend.index', $page_data);
+	}
+	
 	public function createFreeProduct()
 	{
 		$page_data = [
@@ -409,13 +438,53 @@ class MarketplaceProductController extends Controller
 		$freeProduct = FreeProduct::findOrFail($id);
 		$product_images = null; // Media_files::where('product_id', $id)->where('file_type', 'image')->get();
 		
+		$freeProduct = DataBase::table('free_products')
+			->join('users as sponsors', 'sponsors.id', '=', 'free_products.sponsor_id')
+			->leftJoin('users as receivers', 'receivers.id', '=', 'free_products.receiver_id')
+			->select(
+				'free_products.*',
+				'sponsors.address as sponsorAddress',
+				'sponsors.regionId as sponsorDistrictId',
+				'sponsors.districtId as sponsorRegionId',
+				'receivers.address as receiverAddress',
+				'receivers.regionId as receiverRegionId',
+				'receivers.districtId as receiverDistrictId'
+			)
+			->where('free_products.id', $id)
+			->first();
+		
+		$sponsorFullAddress = '';
+		$receiverFullAddress = '';
+		
+		$sponsorAddress = $freeProduct->sponsorAddress;
+		$sponsorRegion = $freeProduct->sponsorRegionId ? User::REGIONS[$freeProduct->sponsorRegionId] : '';
+		$sponsorDistrict = $freeProduct->sponsorRegionId && $freeProduct->sponsorDistrictId
+			? User::DISTRICTS[$freeProduct->sponsorRegionId][$freeProduct->sponsorDistrictId]
+			: '';
+		
+		$receiverAddress = $freeProduct->receiverAddress;
+		$receiverRegion = $freeProduct->receiverRegionId ? User::REGIONS[$freeProduct->receiverRegionId] : '';
+		$receiverDistrict = $freeProduct->receiverRegionId && $freeProduct->receiverDistrictId
+			? User::DISTRICTS[$freeProduct->receiverRegionId][$freeProduct->receiverDistrictId]
+			: '';
+		
+		if ($sponsorRegion) {
+			$sponsorFullAddress = sprintf('%s, %s tumani, %s', $sponsorRegion, $sponsorDistrict, $sponsorAddress);
+		}
+		
+		if ($receiverRegion) {
+			$receiverFullAddress = sprintf('%s, %s tumani, %s', $receiverRegion, $receiverDistrict, $receiverAddress);
+		}
+		
 		$page_data = [
 			'freeProduct' => $freeProduct,
 			'users' => User::all(),
 			'product_types' => ProductType::all()->where('is_deleted', 0),
 			'page_name' => 'marketplace_product_create',
 			'page_title' => get_phrase('Create Product'),
-			'view_path' => 'marketplace/free_product_create'
+			'view_path' => 'marketplace/free_product_create',
+			'sponsorFullAddress' => $sponsorFullAddress,
+			'receiverFullAddress' => $receiverFullAddress,
 		];
 		
 		return view('backend.index', $page_data);
@@ -436,6 +505,7 @@ class MarketplaceProductController extends Controller
 		
 		$isSold = false;
 		$is_active = false;
+		$is_ordered = false;
 		
 		if (!empty($request->receiver_id)) {
 			$isSold = true;
@@ -444,14 +514,20 @@ class MarketplaceProductController extends Controller
 		if (!empty($request->is_active)) {
 			$is_active = true;
 		}
+		
+		if (!empty($request->is_ordered)) {
+			$is_ordered = true;
+		}
 
 		$freeProduct = FreeProduct::findOrFail($id);
 		
 		$freeProduct->receiver_id = $request->receiver_id;
 		$freeProduct->delivered_date = now();
 		$freeProduct->is_sold = (int) $isSold;
+		$freeProduct->is_ordered = (int) $is_ordered;
 		$freeProduct->is_active = (int) $is_active;
 		$freeProduct->deadline_hour = $request->deadline_hour;
+
 		$freeProduct->save();
 		
 		if (0 && $request->hasFile('multiple_files')){

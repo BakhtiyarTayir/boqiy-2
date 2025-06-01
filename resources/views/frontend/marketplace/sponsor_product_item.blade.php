@@ -56,7 +56,7 @@
             </div>
     
             <div class="row mt-4">
-                <a href="#" class="btn btn-primary">
+                <a href="{{ $sponsorUrl }}" class="btn btn-primary">
                     Sponsor bo'lish
                 </a>
             </div>

@@ -18,9 +18,6 @@ if ($hostname == '127.0.0.1:8000' || str_contains($script_name, 'valet/')) {
 
 $app_url = $host_type . $hostname;
 
-// @todo: Asilbek change
-$app_url = 'http://localhost:8080';
-
 return [
 
     /*
@@ -47,6 +44,7 @@ return [
     |
      */
 
+	
     'env' => env('APP_ENV', 'production'),
 
     /*
@@ -73,6 +71,7 @@ return [
     |
      */
 
+	// $app_url = 'http://127.0.0.1:8000';
     'url' => $app_url,
 
     'asset_url' => $asset_url,
@@ -89,7 +88,7 @@ return [
      */
 
     // 'timezone' => env('APP_TIMEZONE'),
-    'timezone' => "Asia/Dhaka",
+    'timezone' => "Asia/Tashkent",
 
     /*
     |--------------------------------------------------------------------------

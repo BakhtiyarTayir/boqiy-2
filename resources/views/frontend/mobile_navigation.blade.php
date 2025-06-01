@@ -41,8 +41,13 @@
         </select>
     </div>
     <div>
+        <a href="{{ !empty($user) ? route('myProducts')  : route('noLoginProduct')}}">
+            <i class="fa-solid fa-bag-shopping fa-2x text-warning me-2"></i>
+        </a>
+    </div>
+    <div>
         <a href="{{ route('allproducts') }}">
-            <img src="{{asset('/assets/frontend/images/support.png')}}" width="30" alt="homiylik">
+            <img src="{{asset('/assets/frontend/images/support.png')}}" width="30" alt="Homiylik">
         </a>
     </div>
 </div>

@@ -281,4 +281,22 @@
         $('#ShareButton').addClass('d-none');
         $('#ShareButton').removeClass('d-block');
     });
+
+    function startPulse() {
+        const $el = $('.element-pulse');
+
+        function pulse() {
+            $el.removeClass('text-white').addClass('text-warning'); // 1s text-primary
+            setTimeout(function () {
+                $el.removeClass('text-warning').addClass('text-white'); // 0.2s text-white
+                setTimeout(pulse, 300); // qayta boshlash
+            }, 500); // 1s kutish
+        }
+
+        pulse(); // boshlash
+    }
+
+    $(document).ready(function () {
+        startPulse();
+    });
 </script>

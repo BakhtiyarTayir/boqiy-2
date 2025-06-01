@@ -87,6 +87,12 @@
                             {{ get_phrase('Marketplace') }}
                         </a>
                     </li>
+                    <li class="element-pulse2 @if (Route::currentRouteName() == 'myProducts') active @endif">
+                        <a href="{{ !empty($user) ? route('myProducts')  : route('noLoginProduct')}}">
+                            <i class="fa-solid fa-bag-shopping fa-lg text-warning me-2"></i>
+                            {{ get_phrase('Xaridlarim') }}
+                        </a>
+                    </li>
                     <li class="element-pulse2 @if (Route::currentRouteName() == 'allProductsForSponsor' || Route::currentRouteName() == 'sponsorProductView') active @endif">
                         <a href="{{ !empty($user) ? route('allProductsForSponsor')  : route('noLoginProduct')}}">
                             <img src="{{asset('/assets/frontend/images/support.png')}}" width="30" alt="homiylik">

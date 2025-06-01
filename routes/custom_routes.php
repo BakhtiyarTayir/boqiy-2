@@ -58,6 +58,7 @@ Route::controller(EventController::class)->middleware('auth', 'user', 'verified'
 Route::controller(MarketplaceController::class)->middleware('auth', 'user', 'verified', 'activity', 'prevent-back-history')->group(function () {
 	// @todo Asilbek change
 	Route::get('/products', 'allproducts')->name('allproducts');
+	Route::get('/my-products', 'myProducts')->name('myProducts');
 	Route::get('/sponsor/products', 'allProductsForSponsor')->name('allProductsForSponsor');
 	Route::get('sponsor/product/view/{id}', 'sponsorProductView')->name('sponsorProductView');
 	Route::get('user/product', 'userproduct')->name('userproduct');
@@ -66,6 +67,7 @@ Route::controller(MarketplaceController::class)->middleware('auth', 'user', 'ver
 	Route::get('product/delete', 'product_delete')->name('product.delete');
 	Route::get('/load_product_by_scrolling', 'load_product_by_scrolling')->name('load_product_by_scrolling');
 	Route::get('product/view/{id}', 'single_product')->name('single.product');
+	Route::post('product/buy/{id}', 'productBuy')->name('productBuy');
 
 	//Route::get('/product/filter/{category?}/{max?}/{min?}/{brand?}/{location?}', 'filter')->name('filter.product');
     Route::get('/product/filter/{max?}/{min?}/{location?}', 'filter')->name('filter.product');

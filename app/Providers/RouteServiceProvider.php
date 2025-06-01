@@ -68,14 +68,18 @@ class RouteServiceProvider extends ServiceProvider
 
 
 
-            if (DB::connection()->getDatabaseName() != 'laravel') {
-                if (Schema::hasTable('addons')) {
-                    if (addon_status('fundraiser') == 1) {
-                        Route::middleware('web')
-                        ->namespace($this->namespace)
-                        ->group(base_path('routes/fundraiser.php'));
+            try {
+                if (DB::connection()->getDatabaseName() != 'laravel') {
+                    if (Schema::hasTable('addons')) {
+                        if (addon_status('fundraiser') == 1) {
+                            Route::middleware('web')
+                            ->namespace($this->namespace)
+                            ->group(base_path('routes/fundraiser.php'));
+                        }
                     }
                 }
+            } catch (\Exception $e) {
+                // Пропускаем проверку аддонов при ошибке подключения к базе данных
             }
 
         });

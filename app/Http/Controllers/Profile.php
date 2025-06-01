@@ -114,6 +114,8 @@ class Profile extends Controller
 			$currentUser->name = $request->name;
 			$currentUser->date_of_birth = $request->date_of_birth;
 			$currentUser->address = $request->address;
+			$currentUser->regionId = $request->regionId;
+			$currentUser->districtId = $request->districtId;
 			$currentUser->profession = $request->profession;
 			$currentUser->about = $request->about;
 			
@@ -139,6 +141,10 @@ class Profile extends Controller
 			}
 			
 			$currentUser->save();
+			
+			if (!empty($request->isSponsor)) {
+				return redirect(route('allProductsForSponsor'));
+			}
 			
 			return redirect(route('profileEdit', ['id' => $userId]));
 		}

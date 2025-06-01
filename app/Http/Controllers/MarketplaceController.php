@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FreeProduct;
 use App\Models\Marketplace;
 use App\Models\Media_files;
 use App\Models\ProductComment;
@@ -47,6 +48,81 @@ class MarketplaceController extends Controller
 		return view('frontend.index', $page_data);
 	}
 	
+    public function productBuy(Request $request)
+    {
+      $productId = $request->id;
+      $user = auth()->user();
+      
+      if ($productId && !empty($user)) {
+        $product = FreeProduct::where('id', $productId)->first();
+        
+        $freeProduct = DataBase::table('free_products')
+          ->join('product_types as pt', 'pt.id', '=', 'free_products.product_type_id')
+          ->select(
+            'free_products.*',
+            'pt.id as product_type_id',
+            'pt.name as name',
+            'pt.price_for_every_one as price_for_every_one',
+          )
+          ->where('free_products.id', $productId)
+          ->where('free_products.is_sold', 0)
+          ->where('free_products.is_active', 1)
+          ->first();
+        
+        $walletBalance = $user->wallet;
+        $wallet = Wallet::where('id', $walletBalance->id)->first();
+        $walletNewBalance = $wallet->balance - $freeProduct->price_for_every_one;
+        
+        if ($walletNewBalance >= 0) {
+          $wallet->balance = $walletNewBalance;
+          $wallet->save();
+          
+          $product->is_sold = 1;
+          $product->receiver_id = $user->id;
+          $product->save();
+        }
+        
+        return redirect(route('myProducts'));
+      }
+      
+      return redirect(route('allproducts'));
+    }
+  
+	
+	public function myProducts()
+	{
+		$user = auth()->user();
+
+		$myProducts = DataBase::table('free_products')
+			->join('product_types as pt', 'pt.id', '=', 'free_products.product_type_id')
+			->join('users as sponsors', 'sponsors.id', '=', 'free_products.sponsor_id')
+			->join('users as receivers', 'receivers.id', '=', 'free_products.receiver_id')
+			->select(
+				'free_products.*',
+				'pt.id as product_type_id',
+				'pt.name as name',
+				'pt.price_for_every_one as price_for_every_one',
+				'pt.file_path as file_path',
+				'sponsors.name as sponsor_name',
+				'sponsors.is_anonymous_sponsor as is_anonymous_sponsor',
+				'receivers.name as receiver_name'
+			)
+			->where('free_products.is_payment_sponsor', 1)
+			->where('free_products.is_active', 1)
+			->where('receivers.id', $user->id)
+			->get();
+		
+		$page_data['myProducts'] = $myProducts;
+		
+		
+		$page_data['view_path'] = 'frontend.marketplace.my-products';
+		
+		//dd($myProducts);
+		
+		return view('frontend.index', $page_data);
+		
+	}
+	
 	public function allProductsForSponsor()
 	{
 		$sponsorProducts = ProductType::query()
@@ -68,13 +144,25 @@ class MarketplaceController extends Controller
 			->where('product_types.is_deleted', 0)
 			->first();
 		
+		$user = auth()->user();
+		
+		// @todo shu urlga tovarga to'lov qilinadigan joyga o'tib ketishi kerak
+		$sponsorUrl = '#';
+		
+		if (!$user->address || !$user->social_links) {
+			$sponsorUrl = route('profileEdit', ['id' => $user->id, 'sponsor' => 1]);
+		}
+
 		if ($freeProduct) {
 			$page_data['product'] = $freeProduct;
+			$page_data['sponsorUrl'] = $sponsorUrl;
 			$page_data['product_image'] = Media_files::where('product_id',$id)->where('file_type','image')->get();
 			$page_data['view_path'] = 'frontend.marketplace.sponsor_product_item';
 			
 			return view('frontend.index', $page_data);
 		} else {
+			
+			return redirect(route('allProductsForSponsor'));
 			if (isset($_GET['shared'])){
 				$page_data['post'] = '';
 				
@@ -297,8 +385,19 @@ class MarketplaceController extends Controller
 				->limit(10)
 				->get();
 			
+			$user = auth()->user();
+			
+			// @todo Asilbek harid qilish url bo'lishi kerak
+			$redirectEditProfileUrl = null;
+			
+			if (!$user->address || !$user->social_links) {
+				$redirectEditProfileUrl = route('profileEdit', ['id' => $user->id, 'coast' => 1]);
+				$redirectEditProfileUrl .= '#fullAddress';
+			}
+			
 			$page_data['product'] = $freeProduct;
-			$page_data['product_image'] = Media_files::where('product_id',$id)->where('file_type','image')->get();
+			$page_data['redirectEditProfileUrl'] = $redirectEditProfileUrl;
+		//	$page_data['product_image'] = Media_files::where('product_id',$id)->where('file_type','image')->get();
 			$page_data['view_path'] = 'frontend.marketplace.single_product';
 			$page_data['product_comments'] = ProductComment::query()
 				->select([
@@ -311,16 +410,9 @@ class MarketplaceController extends Controller
 				->get();
 			
 			return view('frontend.index', $page_data);
-		} else {
-			if (isset($_GET['shared'])){
-				$page_data['post'] = '';
-				
-				return view('frontend.marketplace.custom_shared_view', $page_data);
-			} else{
-				
-				return redirect()->back()->with('error_message', 'This product is not available');
-			}
 		}
+		
+		return redirect(route('allproducts'));
 	}
 
     // on key up product search 

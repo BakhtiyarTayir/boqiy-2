@@ -42,6 +42,8 @@ Route::get('/admin/marketplace/products/out-of-stock', [App\Http\Controllers\Adm
 
 Route::get('/admin/marketplace/free/products', [App\Http\Controllers\Admin\MarketplaceProductController::class, 'indexFreeProduct'])
 	->name('admin.marketplace.free.products')->middleware('auth', 'admin', 'verified', 'activity');
+Route::get('/admin/marketplace/free/unshipped/order/products', [App\Http\Controllers\Admin\MarketplaceProductController::class, 'getUnshippedOrders'])
+	->name('admin.marketplace.free.unshippedOrdersProducts')->middleware('auth', 'admin', 'verified', 'activity');
 Route::get('/admin/marketplace/free/products/create', [App\Http\Controllers\Admin\MarketplaceProductController::class, 'createFreeProduct'])
 	->name('admin.marketplace.free.products.create')->middleware('auth', 'admin', 'verified', 'activity');
 Route::post('/admin/marketplace/free/product/save', [App\Http\Controllers\Admin\MarketplaceProductController::class, 'storeFreeProduct'])

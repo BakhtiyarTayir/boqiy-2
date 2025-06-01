@@ -134,6 +134,7 @@
         <li class="nav-links-li @if (
                 Route::currentRouteName() == 'admin.marketplace.products' ||
                 Route::currentRouteName() == 'admin.marketplace.free.products' ||
+                Route::currentRouteName() == 'admin.marketplace.free.unshippedOrdersProducts' ||
                 Route::currentRouteName() == 'admin.marketplace.products.create' ||
                 Route::currentRouteName() == 'admin.marketplace.products.show' ||
                 Route::currentRouteName() == 'admin.marketplace.products.edit' ||
@@ -169,6 +170,10 @@
                 <li>
                     <a class="@if (Route::currentRouteName() == 'admin.marketplace.free.products') Active @endif"
                        href="{{ route('admin.marketplace.free.products') }}">{{ get_phrase('Free Products') }}</a>
+                </li>
+                <li>
+                    <a class="@if (Route::currentRouteName() == 'admin.marketplace.free.unshippedOrdersProducts') Active @endif"
+                       href="{{ route('admin.marketplace.free.unshippedOrdersProducts') }}">{{ get_phrase('Zakaz Products') }}</a>
                 </li>
                 <li>
                     <a class="@if (Route::currentRouteName() == 'admin.marketplace.products.featured') Active @endif"

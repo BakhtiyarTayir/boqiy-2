@@ -224,8 +224,6 @@
     @if($post->post_type != 'fundraiser')
         <div class="single-item-countable single-entry lenta-posts" id="postIdentification{{ $post->post_id }}" data-post-id="{{ $post->post_id }}" data-post-animation="{{ $post->post_animation }}">
             <div class="entry-inner">
-                <div class="permanent-like-animation"></div>
-                
                 @if ($post->publisher == 'memory')
                     @php
                         $explode_data = explode('/', $post->description);

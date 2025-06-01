@@ -25,7 +25,11 @@ class UserActivity
 
         if(Auth::check()){
             $expiresat = Carbon::now()->addMinutes(5);
-            Cache::put('user-is-online-'.Auth::user()->id,true,$expiresat);
+            try {
+                Cache::put('user-is-online-'.Auth::user()->id, true, $expiresat);
+            } catch (\Exception $e) {
+                // Логирование ошибки или другие действия при необходимости
+            }
         }
 
         return $next($request);

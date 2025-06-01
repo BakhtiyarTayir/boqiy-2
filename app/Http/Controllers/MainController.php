@@ -1436,6 +1436,7 @@ class MainController extends Controller
 		
 		$productComment = ProductComment::create($productCommentData);
 		
+		\Illuminate\Support\Facades\Log::info($productComment);
 		$status = 'error';
 		
 		if (!empty($productComment)) {

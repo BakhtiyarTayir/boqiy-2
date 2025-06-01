@@ -8,7 +8,7 @@
 				$userWalletBalance = $userWallet->balance;
             }
         @endphp
-        @if ($product->price_for_every_one > $userWalletBalance)
+        @if (!$product->is_sold && $product->price_for_every_one > $userWalletBalance)
             <div class="my-3">
                 <p class="mx-3" style="color: #dc3545; font-weight: bold;">
                     <i class="fas fa-exclamation fa-lg me-1"></i>️ Afsuski, bu tovarni olish uchun  <i class="fas fa-wallet text-primary mx-2"></i> hamyoningizda mablag' yetarli emas.
@@ -18,7 +18,7 @@
         <div class="col-lg-12">
             <img src="{{ route('showProductTypeFile', ['product_type_id' => $product->product_type_id]) }}" alt="{{ $product->name }}"
                  class="img-thumbnail"  style="max-width: 100%; height: auto;">
-            @if (!empty($product_image) && count($product_image))
+            @if (0 && !empty($product_image) && count($product_image))
                 <div id="carouselExampleIndicators" class="carousel np_carousel slide product-slider"
                      data-bs-ride="false">
                     
@@ -56,16 +56,31 @@
                         <div class="product-info  np_info_pro">
                             <h1 class="product-title h4 fw-7 my-2">
                                 {{ $product->name }}
-                                @if ($product->is_sold)
-                                    <span class="badge bg-warning text-dark ml-2">Sovg'a topshirilgan</span>
+                                @if ($product->is_ordered)
+                                    <span class="badge bg-success text-dark ml-2">Sovg'a topshirilgan</span>
+                                @elseif ($product->is_sold)
+                                    <span class="badge bg-warning text-dark ml-2">Sovg'a xarid qilingan</span>
                                 @endif
                             </h1>
                             
                             <span class="product-title h4 fw-7 my-2">Narxi: </span>
                             <del><span class="pt-price  sub-title">{{ number_format($product->price_for_every_one, 0, '.', ' ') }} so'm</span></del>
                             <span style="color: firebrick" class="pt-price fa-lg sub-title ml-3">{{ 'O so\'m' }}</span>
-                            
-                            
+
+                            @if (!$product->receiver_id && $product->price_for_every_one <= $userWalletBalance)
+                                @if (!empty($redirectEditProfileUrl))
+                                    <div>
+                                        <a href="{{ $redirectEditProfileUrl }}" class="btn btn-primary">Harid qilish</a>
+                                    </div>
+                                @else
+                                    <form method="POST" action="{{ route('productBuy', ['id' => $product->id]) }}">
+                                        @csrf
+                                        <div>
+                                            <button class="btn btn-primary">Harid qilish</button>
+                                        </div>
+                                    </form>
+                                @endif
+                            @endif
                             <hr class="mt-3">
                             
                             @if (!$product->is_anonymous_sponsor)
@@ -282,8 +297,10 @@
                         <div class="p-8">
                             <h3 class="h6">
                                 <a href="{{ route('single.product',$related_product->id) }}"> {{ ellipsis($related_product->name, 15) }}</a>
-                                @if ($related_product->is_sold)
-                                    <span class="badge bg-warning text-dark ml-2">Sovg'a topshirilgan</span>
+                                @if ($related_product->is_ordered)
+                                    <span class="badge bg-success text-dark ml-2">Sovg'a topshirilgan</span>
+                                @elseif ($related_product->is_sold)
+                                    <span class="badge bg-warning text-dark ml-2">Sovg'a xarid qilingan</span>
                                 @endif
                             </h3>
                             <a href="{{ route('single.product',$related_product->id) }}" class="btn common_btn d-block">
@@ -374,6 +391,8 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
+                    console.error('Status:', status);
+                    console.error('Xhr:', xhr);
                 }
             });
         });

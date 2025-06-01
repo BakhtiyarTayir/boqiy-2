@@ -51,7 +51,7 @@
             </div>
             
             <!-- Address -->
-            <div class="mb-3">
+            <div class="mb-3" id="fullAddress">
                 <label for="address" class="form-label">Manzil</label>
                 <input type="text" class="form-control" id="address" name="address" value="{{ old('address') ?? ($user_info->address ?? '') }}">
             </div>
@@ -61,6 +61,56 @@
                 <label for="profession" class="form-label">Kasbi</label>
                 <input type="text" class="form-control" id="profession" name="profession" value="{{ old('profession') ?? ($user_info->profession ?? '') }}">
             </div>
+        @endif
+
+        <!-- Address -->
+
+        <div class="mb-3" id="fullAddress">
+            <label for="address" class="form-label">Manzil</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="regionId">Viloyat</label>
+            <select name="regionId" id="regionId"
+                    class="form-select eForm-control select2" required>
+                <option value="">Tanlanmadi</option>
+                @php
+                    $regionId = old('region') ?: $user_info->regionId ?: null;
+                @endphp
+
+                @foreach (\App\Models\User::REGIONS as $k => $region)
+                    @php
+                        $selected = $regionId == $k ? 'selected' : '';
+                    @endphp
+                    <option value="{{ $k }}" {{ $selected }}> {{ $region }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="districtId">Tuman</label>
+            <select name="districtId" id="districtId"
+                    class="form-select eForm-control select2"
+                    required
+                    data-all-distirct="{{ json_encode(\App\Models\User::DISTRICTS) }}"
+                    data-selected-distirct="{{ old('districtId') ?: $user_info->districtId ?: null }}"
+            >
+                <option value="">Tanlanmadi</option>
+
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="address" class="form-label">Qo'shimcha ma'lumotlar (mahalla, ko'cha)</label>
+            <input type="text" class="form-control" required id="address" name="address" value="{{ old('address') ?? ($user_info->address ?? '') }}">
+        </div>
+
+        @if (!empty(request()->sponsor))
+            <input type="hidden" name="isSponsor" value="1">
+        @endif
+
+        @if (!empty(request()->coast))
+            <input type="hidden" name="isSponsor" value="1">
         @endif
     
         <!-- Telegram -->
@@ -124,6 +174,9 @@
                 Men xomiy sifatida ishtirok etsam, ismimni ko‘rsatishni xohlamayman
             </label>
         </div>
+
+
+
     
     
             <!-- About -->
@@ -136,6 +189,7 @@
 </div>
 
 <script>
+    console.log(232)
     function previewImage(event) {
         const reader = new FileReader();
         reader.onload = function(){
@@ -144,4 +198,47 @@
         };
         reader.readAsDataURL(event.target.files[0]);
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const regionSelect = document.getElementById('regionId');
+        const districtSelect = document.getElementById('districtId');
+
+        // Agar districtSelect yo‘q bo‘lsa, to‘xtatamiz
+        if (!regionSelect || !districtSelect) return;
+
+        const allDistricts = districtSelect.dataset.allDistirct ? JSON.parse(districtSelect.dataset.allDistirct) : {};
+        const selectedDistrictId = districtSelect.dataset.selectedDistirct;
+
+        function populateDistricts(regionId) {
+            districtSelect.innerHTML = '<option value="">Tanlanmadi</option>';
+
+            if (allDistricts[regionId]) {
+                const districts = allDistricts[regionId];
+                Object.keys(districts).forEach(function (key) {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = districts[key];
+                    if (key === selectedDistrictId) {
+                        option.selected = true;
+                    }
+                    districtSelect.appendChild(option);
+                });
+            }
+
+            // Agar select2 ishlatilayotgan bo‘lsa
+            if (typeof jQuery !== 'undefined' && $(districtSelect).hasClass('select2')) {
+                $(districtSelect).trigger('change.select2');
+            }
+        }
+
+        if (regionSelect.value) {
+            populateDistricts(regionSelect.value);
+        }
+
+        regionSelect.addEventListener('change', function () {
+            console.log(232);
+            populateDistricts(this.value);
+        });
+    });
+
 </script>

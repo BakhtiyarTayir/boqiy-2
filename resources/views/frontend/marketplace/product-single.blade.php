@@ -9,8 +9,10 @@
                     <a href="{{ route('single.product', $product->id) }}">
                         {{ ellipsis($product->name, 18) }}
                     </a>
-                    @if ($product->is_sold)
-                        <span class="badge bg-warning text-dark ml-2">Sovg‘a topshirilgan</span>
+                    @if ($product->is_ordered)
+                        <span class="badge bg-success text-dark ml-2">Sovg‘a topshirilgan</span>
+                    @elseif ($product->is_sold)
+                        <span class="badge bg-warning text-dark ml-2">Sovg‘a xarid qilingan</span>
                     @endif
                 </h3>
                 
